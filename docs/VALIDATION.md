@@ -14,16 +14,18 @@
 
 ## ESP32 타깃 빌드
 
-공식 Arduino CLI 1.2.2를 다운로드하고 공식 체크섬 파일과 SHA-256을 대조했습니다. 초기에는 다음 도메인의 네트워크 정책 차단으로 빌드를 수행하지 못했으며, 새 환경에서 허용이 적용된 뒤 보드 패키지 설치와 전체 빌드 검증을 재개했습니다.
+공식 Arduino CLI 1.2.2를 다운로드하고 공식 체크섬 파일과 SHA-256을 대조했습니다. 초기에는 다음 도메인의 네트워크 정책 차단으로 빌드를 수행하지 못했으나, 새 환경에서 허용이 적용된 뒤 검증을 재개했습니다.
 
 - `downloads.arduino.cc`: Arduino 패키지·라이브러리 인덱스
 - `espressif.github.io`: ESP32 보드 인덱스
 
-이 기록 시점에 **ESP32 전체 타깃 컴파일은 진행 중**입니다. `.github/workflows/ci.yml`의 전체 빌드와 로컬 빌드가 완료된 뒤 결과를 갱신합니다. Arduino 인덱스의 정확한 라이브러리 이름은 `Adafruit INA260 Library`입니다. 지정한 ESP32 3.3.2, Adafruit INA260 Library 1.5.3, ArduinoJson 7.4.2의 공식 Git 태그 존재는 확인했습니다.
+**ESP32 전체 타깃 컴파일이 GitHub Actions에서 통과했습니다.** [검증 실행 41198818221](https://github.com/kwonmail900/TSPhysicalAI2/actions/runs/41198818221)은 커밋 `5a2a7641af820794c148d119a506c94cd6b5487b`의 Python·C++·JavaScript 검사와 ESP32 빌드를 모두 성공으로 완료했습니다. 이후 검증 기록·다운로드 ZIP 갱신은 펌웨어 소스를 변경하지 않습니다.
+
+빌드 조건은 Arduino CLI 1.2.2, ESP32 코어 3.3.2, `Adafruit INA260 Library` 1.5.3, ArduinoJson 7.4.2, 보드 `esp32:esp32:esp32`, 병렬 작업 2개입니다. `config.h.example`을 복사한 예제 설정으로 컴파일했으며 실제 Wi-Fi 자격 정보나 장치 토큰을 사용하지 않았습니다. 전체 컴파일 성공은 실제 보드 업로드·배선·센서 정확도·모터 구동 검증과 구분합니다.
 
 ## 별도 실물 검증이 필요한 항목
 
-- 실제 ESP32 펌웨어 빌드·업로드와 통신
+- 실제 ESP32에 사용자 설정을 적용한 펌웨어 업로드와 통신
 - INA260의 전압·전류·전력 교정 및 독립 계기 대조
 - 납품 모터의 엔코더 계수·방향·RPM 교정
 - LED·모터 드라이버와 전원·배선 정격 대조

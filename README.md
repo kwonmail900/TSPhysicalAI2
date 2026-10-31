@@ -103,7 +103,7 @@ g++ -std=c++17 -Wall -Wextra -Werror -pedantic tests/native_firmware_test.cpp -o
 /tmp/tspai2-guards
 ```
 
-GitHub Actions에는 ESP32 코어 3.3.2, Adafruit INA260 1.5.3, ArduinoJson 7.4.2로 전체 보드 빌드를 수행할 설정을 포함했습니다. 설정 파일의 존재가 실제 CI 실행 성공을 뜻하지는 않습니다.
+GitHub Actions에서 Python 테스트 18개, C++ 보호 로직 검사 10개, JavaScript 검사와 ESP32 전체 빌드가 [통과했습니다](https://github.com/kwonmail900/TSPhysicalAI2/actions/runs/41198818221). ESP32 코어 3.3.2, Adafruit INA260 Library 1.5.3, ArduinoJson 7.4.2를 사용했습니다. 실제 장치의 업로드·계측·구동은 별도 검증이 필요합니다.
 
 PC 자동 테스트와 호스트 C++ 검증은 실제 ESP32 전체 빌드·업로드·실물 검증과 구분합니다. 실행 결과와 함께 사용한 Python·Arduino 보드 패키지·센서 라이브러리 버전을 기록하십시오.
 
