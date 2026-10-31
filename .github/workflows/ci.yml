@@ -1,0 +1,31 @@
+name: Software and firmware checks
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  software:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m unittest discover -s tests -v
+      - run: g++ -std=c++17 -Wall -Wextra -Werror -pedantic tests/native_firmware_test.cpp -o /tmp/guards && /tmp/guards
+      - run: node --check static/app.js
+  esp32:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: arduino/setup-arduino-cli@v2
+        with:
+          version: '1.2.2'
+      - name: Install ESP32 toolchain and libraries
+        run: |
+          arduino-cli core update-index --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+          arduino-cli core install esp32:esp32@3.3.2 --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+          arduino-cli lib install "Adafruit INA260@1.5.3" "ArduinoJson@7.4.2"
+      - name: Compile placeholder configuration (no real credentials)
+        run: |
+          cp firmware/esp32_node/config.h.example firmware/esp32_node/config.h
+          arduino-cli compile --jobs 2 --fqbn esp32:esp32:esp32 firmware/esp32_node

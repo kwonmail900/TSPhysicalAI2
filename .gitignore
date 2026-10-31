@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+.venv/
+.pio/
+outputs/
+build/
+firmware/esp32_node/config.h
+*.log
+.env

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#112d43"><title>Physical AI · 에너지 제어 실험실</title>
+  <link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 이동</a>
+<aside class="sidebar">
+  <a class="brand" href="/"><span class="brand-symbol">↻</span><span>PHYSICAL AI<small>ENERGY CONTROL LAB · 02</small></span></a>
+  <div class="side-intro">예측에서 실제 행동까지.<br>명령과 센서의 응답을 비교하세요.</div>
+  <section class="side-section"><h2><span>01</span> 일별 수요 → 모형 예산</h2><p class="help">건물의 다음 날 kWh 예측을 교육용 모형의 Wh 예산으로 환산합니다.</p>
+    <label for="forecast-file" class="file-button">일별 부하 CSV 선택<input id="forecast-file" type="file" accept=".csv,text/csv"></label><div id="file-name" class="file-name">선택한 파일 없음 · 기본 합성 자료 사용</div>
+    <label for="forecast-scale">환산계수 <small>Wh / kWh</small></label><input id="forecast-scale" type="number" min="0.000001" step="0.001" value="0.002">
+    <button id="forecast-button" class="button outline wide" type="button">다음 날 수요 예측</button>
+    <details><summary>자료 형식과 예측 방법</summary><p><code>date,energy_kwh</code><br>최소 8일의 연속된 일별 자료. 전주 같은 요일의 사용량으로 다음 날을 예측합니다. 실제 TSFM·LLM을 호출하지 않습니다.</p></details>
+    <div id="forecast-result" class="forecast-result" hidden><span id="forecast-source">—</span><strong id="forecast-prediction">—</strong><p id="forecast-history">—</p><div><small>추천 모형 예산</small><b id="forecast-budget">—</b></div><button id="apply-budget" class="button outline wide" type="button">추천 예산 적용</button><p>예산 적용과 가동 승인은 각각 실행하세요.</p></div>
+  </section>
+  <section class="side-section"><h2><span>02</span> 작업과 운전 제약</h2>
+    <form id="settings-form">
+      <div class="input-row"><label for="budget">에너지 예산 <small>Wh</small></label><input id="budget" type="number" min="0.001" max="10000" step="0.001" value="1" required></div>
+      <div class="input-row"><label for="power-cap">전력 상한 <small>W</small></label><input id="power-cap" type="number" min="0.1" max="30" step="0.1" value="12" required></div>
+      <div class="input-row"><label for="target-revs">목표 작업량 <small>회전</small></label><input id="target-revs" type="number" min="1" max="1000000" step="1" value="200" required></div>
+      <div class="input-row"><label for="deadline">작업 시한 <small>초</small></label><input id="deadline" type="number" min="1" step="1" value="180" required></div>
+      <div class="input-row"><label for="led-demand">조명 설정 듀티 <small>%</small></label><input id="led-demand" type="number" min="0" max="100" step="1" value="60" required></div>
+      <div class="input-row"><label for="led-min">최소 조명 듀티 <small>%</small></label><input id="led-min" type="number" min="0" max="100" step="1" value="30" required></div>
+      <div class="input-row"><label for="motor-target">목표 회전수 <small>RPM</small></label><input id="motor-target" type="number" min="1" max="220" step="1" value="100" required></div>
+      <label for="policy">운영 정책</label><select id="policy"><option value="feedback">실측 피드백 제어</option><option value="fixed">고정 출력</option></select>
+      <button id="settings-button" type="submit" class="button outline wide">설정 적용</button>
+    </form><p class="help">설정 적용은 가동 승인과 별도입니다. 가동 중에는 새 설정이 출력에 반영됩니다. 새 작업은 작업량만, 실험 초기화는 에너지·로그까지 초기화합니다.</p>
+  </section>
+  <div class="side-footer">NODE 01 · ESP32 + INA260<br>LED 조명 · 엔코더 DC 모터<br><span>저전압 교육 모형</span></div>
+</aside>
+<main id="main">
+  <header class="topbar"><div class="breadcrumb">실험실 <span>/</span> 단일 건물 노드</div><div class="topbar-actions"><span id="link-state" class="link-state"><i></i> 서버 확인 중</span><button id="stop-button" class="stop-button" type="button" disabled>■ STOP · 출력 해제</button></div></header>
+  <section class="hero"><div><div class="eyebrow">TIMESERIES → DECISION → PHYSICAL FEEDBACK</div><h1>예측하고, 움직이고, 확인하다</h1><p>일별 수요 예측과 실시간 전력·회전수 피드백을 연결하는 교육 실험실</p></div><span id="mode-badge" class="mode-badge">MODE 확인 중</span></section>
+  <div id="status" class="status" role="status" aria-live="polite">서버 상태를 불러오고 있습니다…</div>
+  <section id="provenance" class="provenance"><span id="provenance-icon">◉</span><div><strong id="provenance-title">데이터 출처 확인 중</strong><p id="provenance-note">실물 계측값이 도착하기 전에는 측정 결과를 표시하지 않습니다.</p></div></section>
+  <section class="control-panel panel" aria-labelledby="control-heading"><div class="control-title"><div><h2 id="control-heading">가동은 명시적으로, 결과는 관측으로</h2><p id="control-note">부팅·연결 복구만으로 출력을 승인하지 않습니다.</p></div><span id="arm-state" class="state-pill">확인 중</span></div><div class="control-actions"><button id="new-job-button" type="button" class="button quiet" disabled>↺ 새 작업 준비</button><button id="arm-button" type="button" class="button primary" disabled>▶ 가동 승인 · ARM</button><button id="reset-fault-button" type="button" class="button quiet" disabled>고장 해제</button><button id="reset-experiment-button" type="button" class="button quiet" disabled>실험 초기화</button><span id="fault-message">—</span></div><div class="connection-details"><span id="node-label">노드 —</span><span id="last-seen">마지막 수신 —</span><span id="ack-label">명령 확인 —</span></div></section>
+  <section class="metrics" aria-label="현재 센서 관측과 누적 결과"><article><span>센서 관측 전력</span><strong id="power-value">—</strong><small id="electrical-value">전압 — · 전류 —</small></article><article><span>누적 사용 에너지</span><strong id="energy-value">—</strong><small id="budget-value">예산 —</small><div class="mini-track"><i id="energy-bar"></i></div></article><article><span>엔코더 관측 회전수</span><strong id="rpm-value">—</strong><small>RPM · 명령 PWM과 다를 수 있습니다</small></article><article><span>실제 작업 진척</span><strong id="revs-value">—</strong><small id="job-time">회전량 — · 잔여 시간 —</small><div class="mini-track"><i id="job-bar"></i></div></article></section>
+  <section class="panel loop-panel"><div class="section-heading"><div><h2>닫힌 루프를 따라가세요</h2><p>판단 입력 → 출력 명령 → 실제 응답 → 다음 판단</p></div><span id="policy-badge" class="subtle-badge">규칙 기반 운영</span></div><div class="loop-flow"><article><span>01 · 관측</span><h3>전력과 작업 상태</h3><p id="loop-observe">유효한 관측값 대기</p></article><b aria-hidden="true">→</b><article><span>02 · 판단</span><h3>예산·시한·제약</h3><p id="loop-decision">운영 목표를 설정하세요</p></article><b aria-hidden="true">→</b><article><span>03 · 명령</span><h3>LED · 모터 출력</h3><p id="loop-command">가동 승인 대기</p></article><b aria-hidden="true">↻</b><article class="feedback-card"><span>04 · 피드백</span><h3>센서로 결과 확인</h3><p id="loop-feedback">실측은 명령과 별도로 기록</p></article></div><p class="loop-caption">PWM duty는 제어 명령입니다. 전력·회전수·누적 회전은 센서가 보고한 결과로 구분합니다.</p></section>
+  <div class="chart-grid"><section class="panel"><div class="section-heading"><div><h2>전력의 변화</h2><p>최근 관측 전력과 설정 상한</p></div><span class="subtle-badge">W</span></div><div class="legend"><span class="power-legend">관측 전력</span><span class="limit-legend">설정 상한</span></div><div id="power-chart" class="chart" role="img" aria-label="최근 관측 전력 그래프"><p class="empty-chart">관측 자료를 기다리고 있습니다.</p></div></section><section class="panel"><div class="section-heading"><div><h2>회전수의 변화</h2><p>모터 엔코더로 확인한 응답</p></div><span class="subtle-badge">RPM</span></div><div class="legend"><span class="rpm-legend">관측 회전수</span><span>명령 출력과 별도 측정</span></div><div id="rpm-chart" class="chart" role="img" aria-label="최근 관측 모터 회전수 그래프"><p class="empty-chart">관측 자료를 기다리고 있습니다.</p></div></section></div>
+  <section class="panel command-panel"><div class="section-heading"><div><h2>LED·모터의 출력 명령</h2><p>서버가 제안한 듀티를 표시합니다. 장치 수신 확인과 센서 응답을 함께 확인하세요.</p></div><span class="subtle-badge">DUTY %</span></div><div class="legend"><span class="led-legend">LED 명령</span><span class="motor-legend">모터 명령</span></div><div id="command-chart" class="chart" role="img" aria-label="최근 LED와 모터 듀티 명령 그래프"><p class="empty-chart">명령 기록을 기다리고 있습니다.</p></div></section><section class="panel log-panel"><div class="section-heading"><div><h2>명령과 관측의 기록</h2><p id="log-note">최근 이벤트와 명령 수신 확인을 점검하세요.</p></div><div class="export-actions"><a class="button quiet small" href="/api/log.csv" download="physical_ai_log.csv">↓ 관측 로그 CSV</a><a class="button quiet small" href="/api/events.json" download="physical_ai_events.json">↓ 이벤트 JSON</a></div></div><div class="table-wrap"><table><thead><tr><th scope="col">시간</th><th scope="col">종류</th><th scope="col">내용</th></tr></thead><tbody id="events-body"><tr><td colspan="3">기록을 기다리고 있습니다.</td></tr></tbody></table></div></section>
+  <section class="learning-section"><div class="section-heading"><div><div class="eyebrow">LEARNING MISSIONS</div><h2>현상을 보고, 원인을 설명하세요</h2></div></div><div class="missions"><article><span>MISSION 01</span><h3>같은 명령, 다른 결과</h3><p>모터 출력과 엔코더 RPM의 관계를 관찰하세요. 명령만으로 작업 완료를 판단할 수 없는 이유는 무엇인가요?</p></article><article><span>MISSION 02</span><h3>예산과 작업의 균형</h3><p>같은 작업·시한·초기 상태에서 고정 출력과 피드백 정책을 비교하세요. 전력을 덜 썼다면 작업도 완료했나요?</p></article><article><span>MISSION 03</span><h3>관측이 끊어진다면</h3><p>통신 단절·명령 만료를 점검하세요. 출력 정지와 고장 해제, 재가동 승인은 어떻게 구분되나요?</p></article></div><div class="panel reflection"><label for="learning-note">나의 실험 노트</label><textarea id="learning-note" rows="4" placeholder="가설 → 동일하게 유지한 조건 → 변경한 조건 → 전력·작업 결과 → 해석과 한계"></textarea><div><p>학습 노트는 화면에서 작성하고 파일로 저장하세요. 성적·교육 효과를 자동 생성하지 않습니다.</p><button id="note-export" class="button quiet small" type="button">↓ 노트 저장</button></div></div></section>
+  <footer><strong>실물 모형과 캠퍼스 데이터의 역할을 구분하세요.</strong><p>일별 kWh는 상위 에너지 예산을 위한 입력입니다. 모형의 초 단위 전력과 회전수는 별도로 관측합니다. 교육용 환산은 실제 건물 설비의 비율이나 현장 절감률을 재현하지 않습니다.</p><p>화면의 STOP 명령은 통신을 통해 전달됩니다. 통신 문제가 있으면 현장 전원 스위치로 정지하세요.</p></footer>
+</main>
+</body></html>

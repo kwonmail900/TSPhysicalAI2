@@ -1,0 +1,36 @@
+#pragma once
+
+// Copy this file to config.h. config.h is ignored by Git; never commit credentials.
+// This node and the Python PC must be on the same trusted teaching LAN.
+static const char* WIFI_SSID = "YOUR_WIFI_SSID";
+static const char* WIFI_PASSWORD = "YOUR_WIFI_PASSWORD";
+static const char* SERVER_BASE_URL = "http://192.168.0.10:8765";
+static const char* DEVICE_TOKEN = "REPLACE_WITH_THE_SAME_LOCAL_TOKEN_AS_THE_PC";
+static const char* DEVICE_ID = "node-1";
+
+static constexpr int LED_PIN = 25;
+static constexpr int MOTOR_PIN = 27;  // DRV8871 IN1; IN2 tied to GND (forward only).
+static constexpr int ENCODER_A_PIN = 32;
+static constexpr int ENCODER_B_PIN = 33;
+static constexpr int I2C_SDA_PIN = 21;
+static constexpr int I2C_SCL_PIN = 22;
+static constexpr int PWM_FREQUENCY_HZ = 500;  // DFR0457 is specified up to 1 kHz.
+static constexpr int PWM_BITS = 10;
+
+// Quadrature counts per OUTPUT-shaft revolution including both channels/edges.
+// Example: Pololu #5219, nominal 150:1, actual gear ratio approx. 150.58,
+// 12 encoder counts per motor-shaft revolution => approx. 1806.96 counts/output rev.
+// CHECK YOUR MOTOR DATASHEET and calibrate by rotating a marked output shaft.
+static constexpr double ENCODER_COUNTS_PER_OUTPUT_REV = 1806.96;
+static constexpr int ENCODER_SIGN = 1;  // Change to -1 if forward motion counts backwards.
+
+// Limits are examples for the documented small 12 V bench. Verify ratings and
+// calibrate with the motor unloaded; these guards do not replace a fuse/driver limits.
+static constexpr double MIN_VOLTAGE_V = 9.0;
+static constexpr double MAX_VOLTAGE_V = 15.0;
+static constexpr double MAX_CURRENT_A = 2.0;
+static constexpr double MAX_POWER_W = 30.0;
+static constexpr double MAX_MOTOR_RPM = 400.0;
+static constexpr uint32_t CONTROL_PERIOD_MS = 20;
+static constexpr uint32_t SENSOR_PERIOD_MS = 100;
+static constexpr uint32_t EXCHANGE_PERIOD_MS = 500;
