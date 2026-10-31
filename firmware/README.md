@@ -17,12 +17,12 @@ CLI를 사용할 경우의 명령 예시는 다음과 같습니다. 인덱스·�
 
 ```bash
 arduino-cli core update-index --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
-arduino-cli core install esp32:esp32@3.0.7 --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
-arduino-cli lib install "Adafruit INA260 Library" "Adafruit BusIO" "ArduinoJson@7.3.0"
+arduino-cli core install esp32:esp32@3.3.2 --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+arduino-cli lib install "Adafruit INA260 Library@1.5.3" "ArduinoJson@7.4.2"
 arduino-cli compile --fqbn esp32:esp32:esp32 --jobs 2 firmware/esp32_node
 ```
 
-위 핀 버전은 재현 가능한 설치의 예입니다. 현재 클라우드에서는 공식 인덱스 호스트 `downloads.arduino.cc`와 `espressif.github.io`가 네트워크 정책으로 차단되어 **ESP32 타깃 전체 빌드는 완료하지 못했습니다**. 아래 네이티브 검증은 Arduino 보드 전체 빌드나 실물 시험을 대신하지 않습니다.
+위 명령은 GitHub Actions의 버전과 일치합니다. 보드 빌드와 실물 시험의 검증 상태는 [검증 기록](../docs/VALIDATION.md)에서 확인합니다. 아래 네이티브 검증은 Arduino 보드 전체 빌드나 실물 시험을 대신하지 않습니다.
 
 ## 핀과 데이터
 

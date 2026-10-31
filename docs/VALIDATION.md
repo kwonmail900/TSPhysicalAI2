@@ -14,12 +14,12 @@
 
 ## ESP32 타깃 빌드
 
-공식 Arduino CLI 1.2.2를 다운로드하고 공식 체크섬 파일과 SHA-256을 대조했습니다. 상속된 프록시와 TLS 검증을 유지하여 공식 인덱스를 요청했으나 다음 도메인에서 네트워크 정책 차단을 받았습니다.
+공식 Arduino CLI 1.2.2를 다운로드하고 공식 체크섬 파일과 SHA-256을 대조했습니다. 초기에는 다음 도메인의 네트워크 정책 차단으로 빌드를 수행하지 못했으며, 새 환경에서 허용이 적용된 뒤 보드 패키지 설치와 전체 빌드 검증을 재개했습니다.
 
 - `downloads.arduino.cc`: Arduino 패키지·라이브러리 인덱스
 - `espressif.github.io`: ESP32 보드 인덱스
 
-따라서 **ESP32 전체 타깃 컴파일은 미완료**입니다. `.github/workflows/ci.yml`에는 전체 보드 빌드 절차를 포함했지만, CI 실행 성공을 아직 확인하지 않았습니다. 지정한 ESP32 3.3.2, Adafruit INA260 1.5.3, ArduinoJson 7.4.2의 공식 Git 태그 존재는 확인했습니다.
+이 기록 시점에 **ESP32 전체 타깃 컴파일은 진행 중**입니다. `.github/workflows/ci.yml`의 전체 빌드와 로컬 빌드가 완료된 뒤 결과를 갱신합니다. Arduino 인덱스의 정확한 라이브러리 이름은 `Adafruit INA260 Library`입니다. 지정한 ESP32 3.3.2, Adafruit INA260 Library 1.5.3, ArduinoJson 7.4.2의 공식 Git 태그 존재는 확인했습니다.
 
 ## 별도 실물 검증이 필요한 항목
 

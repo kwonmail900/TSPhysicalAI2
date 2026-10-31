@@ -4,6 +4,8 @@
 
 기본 데이터는 합성 시연 자료입니다. 실제 캠퍼스 원시 자료나 첨부 원고는 저장소에 포함하지 않습니다. 예측은 전주 같은 요일을 사용하는 기준 모델이며, 운영 판단은 규칙과 피드백 제어입니다. **현재 결과를 TSFM·LLM 실행 결과로 표기하지 않습니다.**
 
+[프로그램 ZIP 다운로드](https://github.com/kwonmail900/TSPhysicalAI2/raw/refs/heads/main/downloads/TSPhysicalAI2_v1.zip) · [전체 소스](https://github.com/kwonmail900/TSPhysicalAI2)
+
 ## 1. PC 시연부터 실행
 
 Python 3.10 이상이 필요합니다. PC 프로그램은 Python 표준 라이브러리로 실행하며 별도 `pip` 설치가 필요하지 않습니다.
